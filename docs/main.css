@@ -32,7 +32,7 @@ h1 {
 }
 
 p, li {
-    font-size: 1.4em;
+    font-size: 18px;
 }
 
 p.credit {
@@ -48,7 +48,7 @@ img {
 /* links */
 
 a {
-    color: #1484bc;
+    color: #277fab;
     text-decoration: none;
 }
 
