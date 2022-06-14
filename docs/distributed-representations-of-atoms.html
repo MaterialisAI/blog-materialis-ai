@@ -92,11 +92,11 @@
 
         <p>
             But what do these distributed representations mean? How do they represent the object under consideration?
-            Essentially, they convert the object they represent to a point in a multi- (usually lower-) dimensional
+            Essentially, they convert the object they represent into a point in a multi- (usually lower-) dimensional
             space, in such a way that the relationship to other objects is preserved. This usually means that the
-            Euclidean distance between two such objects reflects their similarity. These representations thus provide
-            a more principled structure to the input data, and are usually lower-dimensional, which should allow an ML
-            model to learn a task more quickly and effectively.
+            Euclidean distance between two such objects/points reflects their similarity. These representations thus
+            provide a more principled structure to the input data, and are usually lower-dimensional, which should allow
+            an ML model to learn a task more quickly and effectively.
         </p>
 
         <p>
@@ -109,14 +109,35 @@
             representations has the effect of accelerating and even improving learning. One such unsupervised learning
             algorithm for developing pre-trained distributed representations of words is
             <a href="https://en.wikipedia.org/wiki/Word2vec" target="_blank">Word2vec</a>. The result of the algorithm
-            is that a vector is assigned to each word in the vocabulary present in the dataset. Each word is assigned a
+            is that a vector is assigned to each word in the vocabulary present in the dataset; each word is assigned a
             unique vector from a learned semantic space, extracted automatically from the structure of the data. And
             since the words inhabit a structured semantic space, they can be combined using logical operations (such
             as addition and subtraction) to produce new vectors which also inhabit the same space.
         </p>
 
         <p>
-            Why does the Word2vec algorithm work?
+            How does the Word2vec algorithm work? Consider the adage <i>&quot;You shall know a word by the company
+            it keeps.&quot;</i> (attributed to J. R. Firth). The algorithm takes this concept and formalizes it as a
+            learning problem. Specifically, the objective is to produce a model that assigns maximal probability to a
+            word when it occurs in the context of certain other words. In practice, this usually means the model must
+            learn to predict the neighbouring words that most often appear with it. The idea is that a word gets its
+            meaning from the context in which it is used. Consider the statement &quot;A person walks into a
+            store&quot;. How probable is it that the word &quot;person&quot; appears in the context of the words
+            &quot;walks&quot; and &quot;store&quot;? It's surely more probable than the word &quot;car&quot;
+            appearing in that context, for example. As we'll see shortly, the model used to predict neighbouring words is a
+            feed-forward network with a single hidden layer, and the initial parameter matrix that transforms the input
+            into the hidden layer is where we'll find the distributed representations for each word.
+        </p>
+
+        <p>
+            What does any of this have to do with atoms, or Materials Science, for that matter? Consider that ML and
+            Deep Learning are playing increasingly prominent roles in Computational Materials Science. It's not
+            surprising, since many of the tasks encountered in Computational Materials Science involve the prediction
+            of the properties of a material. The number of datasets related to materials properties is also increasing.
+            It therefore seems natural that the advances made in ML should find application in Computational Materials
+            Science. As such, a natural question to ask is: how are materials represented in the context of an ML task?
+            The approaches being used are rapidly changing, but traditionally, materials and atoms are represented using
+            local representations.
         </p>
 
         <hr style="border-top: 1px"/>
