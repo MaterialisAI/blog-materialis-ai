@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The Materialis.AI research blog discusses the application of Machine Learning to Materials Science">
+	<title>Materialis.AI - Blog</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Source+Sans+Pro" rel="stylesheet">
+	<link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/png" href="images/materialis-icon.png"/>
+</head>
+
+<body>
+
+<div class="header">
+    <a href="https://materialis.ai" class="homelink">
+        <img src="images/materialisai-logo.png" width="175" class="logo" alt="logo">
+    </a>
+    <div class="header-right">
+        <a href="https://materialis.ai/contact.html"><div>Contact</div></a>
+    </div>
+    <div class="header-right">
+        <a href="https://materialis.ai/about.html"><div>About</div></a>
+    </div>
+    <div class="header-right">
+        <a href="/"><div>Posts</div></a>
+    </div>
+</div>
+
+<div id="container">
+
+    <!-- begin content -->
+
+    <H1>
+        Distributed Representations of Atoms
+    </H1>
+    <span class="post-meta">Mar 18, 2022 &nbsp; &#8226; &nbsp; Luis M. Antunes</span>
+
+    <div id="content">
+
+        <p>
+            An important aspect of applying Machine Learning (ML) to a problem involves choosing a suitable
+            representation for the objects under consideration. For example, to classify a flower that belongs to one of
+            a number of different species, one might choose to represent the flower as a list of scalar and categorical
+            features, such as petal length, petal width, and color. The ability of an ML model to properly perform a
+            task depends strongly on the quality of the representation used. In fact, this is so important in
+            determining the success of an ML project, that feature engineering is often the activity that receives the
+            most attention.
+        </p>
+
+        <p>
+            For many types of problems that ML is applied to, the advent of
+            <a href="https://www.nature.com/articles/nature14539" target="_blank">Deep Learning</a> changed things dramatically.
+            Instead of requiring the manual engineering of features, Deep Learning is often capable of automatically
+            building suitable representations from more basic, and often higher-dimensional representations of the
+            objects under consideration. In Computer Vision and image processing, this basic representation typically
+            consists of the pixels of the image. In Natural Language Processing (NLP), the basic representation is often
+            a <a href="https://en.wikipedia.org/wiki/One-hot#Machine_learning_and_statistics" target="_blank">one-hot vector</a>
+            (when the objects are individual words), or a
+            <a href="https://en.wikipedia.org/wiki/Bag-of-words_model" target="_blank">bag-of-words vector</a> (when the
+            objects are sentences). In board games, such as Go or Chess, the representation can be layers of binary
+            matrices that represent player and opponent pieces and their relative positions, amongst other elements of
+            the game. In all of these examples, the basic representations are high-dimensional, and require very little
+            effort from the ML practitioner to devise. Classic ML algorithms, such as the Support Vector Machine, or the
+            Random Forest, would likely have problems learning with such high-dimensional representations. A Deep
+            Learning model, on the other hand, is often able to automatically extract the representation best suited for
+            the task at hand starting from such basic representations, since internal representations are learned
+            end-to-end, by taking advantage of the error signal provided by backpropagation.
+        </p>
+
+        <p>
+            The representations a Deep Learning model learns, however, may not be readily interpretable by a human. The
+            kinds of representations learned by a Deep Learning model usually stand in contrast to a classical, manually
+            constructed representation. Such manually curated feature vectors can be called <span class="emph">local
+            representations</span>, since each of the elements in the list of features may have little to do with the
+            other elements, and typically represents something concrete and intelligible to a human. Representations
+            in which each of the elements are coupled in some way, and work together to represent the object under
+            consideration, can be called <span class="emph">distributed representations</span>. A Deep Learning model
+            usually learns distributed representations.
+        </p>
+
+        <figure>
+            <div>
+                <img src="images/local-distributed.png" alt="local vs. distributed representations" />
+            </div>
+            <figcaption>
+                Figure 1: Illustration of one-hot and distributed representations. In the diagram, there are <i>n</i>
+                kinds of objects represented, and <i>d</i> is the adjustable number of dimensions of the distributed
+                representation.
+            </figcaption>
+        </figure>
+
+        <p>
+            But what do these distributed representations mean? How do they represent the object under consideration?
+            Essentially, they convert the object they represent to a point in a multi- (usually lower-) dimensional
+            space, in such a way that the relationship to other objects is preserved. This usually means that the
+            Euclidean distance between two such objects reflects their similarity. These representations thus provide
+            a more principled structure to the input data, and are usually lower-dimensional, which should allow an ML
+            model to learn a task more quickly and effectively.
+        </p>
+
+        <p>
+            This is nothing terribly new in the world of ML. In fact, the power of distributed representations was
+            perhaps initially demonstrated in the field of NLP. In NLP tasks, individual words are commonly represented
+            by vectors. As mentioned above, these can be one-hot vectors, but they are often pre-trained distributed
+            representations. Pre-training is a procedure that typically involves applying an unsupervised learning
+            algorithm to a dataset. This has been one of the ways that distributed representations of objects, such as
+            words, are created. Representations created this way can be re-used in downstream tasks. Using pre-trained
+            representations has the effect of accelerating and even improving learning. One such unsupervised learning
+            algorithm for developing pre-trained distributed representations of words is
+            <a href="https://en.wikipedia.org/wiki/Word2vec" target="_blank">Word2vec</a>. The result of the algorithm
+            is that a vector is assigned to each word in the vocabulary present in the dataset. Each word is assigned a
+            unique vector from a learned semantic space, extracted automatically from the structure of the data. And
+            since the words inhabit a structured semantic space, they can be combined using logical operations (such
+            as addition and subtraction) to produce new vectors which also inhabit the same space.
+        </p>
+
+        <p>
+            Why does the Word2vec algorithm work?
+        </p>
+
+        <hr style="border-top: 1px"/>
+
+        <span class="post-notes">Notes</span>
+        <ul class="notestext">
+            <li>
+                Read the <a href="https://www.nature.com/articles/s41524-022-00729-3" target="_blank">paper</a>
+            </li>
+            <li>
+                Get the <a href="https://github.com/lantunes/skipatom" target="_blank">open source</a> code
+            </li>
+        </ul>
+
+    </div>
+
+    <!-- end content -->
+
+    <div class="backbutton">
+        <a href="/"><img src="images/left-arrow.png"></a>
+    </div>
+
+</div>
+
+<footer>
+    <div class="mediaicons">
+        <div style="padding-right: 15px">
+            <a href="mailto:info@materialis.ai"><img width="30px" src="images/email.png"></a>
+        </div>
+        <div>
+            <a href="https://github.com/MaterialisAI"><img width="25px" src="images/github.png"></a>
+        </div>
+    </div>
+    <p class="copyright">&copy; Materialis.AI 2022 | <a class="termslink" style="color:#000000" href="https://materialis.ai/terms.html">Terms &amp; Conditions</a></p>
+</footer>
+
+</body>
+</html>

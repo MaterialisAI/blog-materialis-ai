@@ -32,7 +32,9 @@ h1 {
 }
 
 p, li {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 160%;
+    letter-spacing: .25px;
 }
 
 p.credit {
@@ -156,6 +158,35 @@ p.copyright {
 
 .backbutton {
     float: left !important;
+}
+
+.post-notes {
+    font-size: 13px;
+    color: #b1a7a7;
+}
+
+.notestext {
+    padding-left: 30px;
+}
+
+.notestext li {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.emph {
+    font-weight: bold;
+    font-style: italic;
+}
+
+figcaption {
+    max-width: 650px;
+    margin-right: auto;
+    margin-left: auto;
+    align-self: auto;
+    font-size: 14px;
+    line-height: 150%;
+    color: #828892;
 }
 
 @media (max-width: 800px) {
