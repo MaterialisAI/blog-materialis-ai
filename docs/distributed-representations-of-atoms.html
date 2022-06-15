@@ -59,14 +59,18 @@
             (when the objects are individual words), or a
             <a href="https://en.wikipedia.org/wiki/Bag-of-words_model" target="_blank">bag-of-words vector</a> (when the
             objects are sentences). In board games, such as Go or Chess, the representation can be layers of binary
-            matrices that represent player and opponent pieces and their relative positions, amongst other elements of
-            the game. In all of these examples, the basic representations are high-dimensional, and require very little
-            effort from the ML practitioner to devise. Classic ML algorithms, such as the Support Vector Machine, or the
-            Random Forest, would likely have problems learning with such high-dimensional representations. A Deep
+            matrices that represent player and opponent pieces and their relative positions (amongst other elements of
+            the game). In all of these examples, the basic representations are high-dimensional, and require relatively
+            little effort from the ML practitioner to devise. Classic ML algorithms, such as the Support Vector Machine,
+            or the Random Forest, would likely have problems learning with such high-dimensional representations. A Deep
             Learning model, on the other hand, is often able to automatically extract the representation best suited for
             the task at hand starting from such basic representations, since internal representations are learned
             end-to-end, by taking advantage of the error signal provided by backpropagation.
         </p>
+
+        <H2>
+            Local vs. Distributed Representations
+        </H2>
 
         <p>
             The representations a Deep Learning model learns, however, may not be readily interpretable by a human. The
@@ -99,6 +103,10 @@
             an ML model to learn a task more quickly and effectively.
         </p>
 
+        <H2>
+            Word2vec
+        </H2>
+
         <p>
             This is nothing terribly new in the world of ML. In fact, the power of distributed representations was
             perhaps initially demonstrated in the field of NLP. In NLP tasks, individual words are commonly represented
@@ -130,14 +138,164 @@
         </p>
 
         <p>
-            What does any of this have to do with atoms, or Materials Science, for that matter? Consider that ML and
+            What does any of this have to do with atoms, or Materials Science? Consider that ML and
             Deep Learning are playing increasingly prominent roles in Computational Materials Science. It's not
             surprising, since many of the tasks encountered in Computational Materials Science involve the prediction
             of the properties of a material. The number of datasets related to materials properties is also increasing.
             It therefore seems natural that the advances made in ML should find application in Computational Materials
             Science. As such, a natural question to ask is: how are materials represented in the context of an ML task?
             The approaches being used are rapidly changing, but traditionally, materials and atoms are represented using
-            local representations.
+            local representations. For example, it is common to see atoms represented as vectors of features such as
+            electronegativity, atomic radius, ionic radius, etc. If a specific class of material is being considered,
+            such as the perovskites, with formula ABX<sub>3</sub>, then a material can, for example, be represented by
+            concatenating the A, B and X atom vectors.
+        </p>
+
+        <H2>
+            SkipAtom
+        </H2>
+
+        <p>
+            In recent years, pre-trained distributed representations have begun making their way into Computational
+            Materials Science as well. Two of the more widely known atomic representations of this kind are
+            <a href="https://www.pnas.org/doi/10.1073/pnas.1801181115" target="_blank">Atom2Vec</a> and
+            <a href="https://www.nature.com/articles/s41586-019-1335-8" target="_blank">Mat2Vec</a>. We won't go into
+            how these algorithms work here, but in brief, Atom2Vec takes the compositions found in materials databases,
+            constructs a large co-occurrence matrix of atoms and their atomic environments, and performs singular value
+            decomposition to obtain atom vectors. Mat2Vec, on the other hand, applies the Word2vec algorithm to a large
+            number of abstracts from the materials literature, resulting in representations being learned for atoms (in
+            addition to other kinds of entities). In a
+            <a href="https://www.nature.com/articles/s41524-022-00729-3" target="_blank">paper</a> published today in
+            <i>npj Computational Materials</i>, we introduce another algorithm for building distributed representations
+            for atoms, which we call <span class="emph">SkipAtom</span>.
+        </p>
+
+        <p>
+            We introduced SkipAtom because we believe it has some advantages over the other existing approaches (which
+            we discuss in the
+            <a href="https://www.nature.com/articles/s41524-022-00729-3" target="_blank">paper</a>). The SkipAtom
+            approach makes an analogy between words and atoms, and sentences and chemical compositions. It attempts to
+            formalize the idea that an atom shall be known by &quot;the company it keeps&quot;. We expect to learn the
+            &quot;chemical semantics&quot; of an atom by observing the chemo-structural context in which it occurs. This
+            means that, analogously to Word2vec, we will build a model in an unsupervised fashion that assigns maximal
+            probability to an atom when it occurs within the context of certain other atoms. In practice, the model
+            learns to predict which atoms typically surround any given atom. We won't go into the details here, but we
+            need to be precise about what we mean by &quot;surrounds&quot;, and in brief, this means applying existing
+            algorithms that operate on a crystal structure to create a graph representing what's connected to what, and
+            examining the immediate neighbours of a given atom in the graph.
+        </p>
+
+        <figure>
+            <div>
+                <img src="images/skipatom-training-pairs.png" alt="training pairs" />
+            </div>
+            <figcaption>
+                Figure 2: Crystal structures in a materials database are converted into co-occurring atom pairs for
+                training of SkipAtom vectors.
+            </figcaption>
+        </figure>
+
+        <p>
+            A crystal structure database is used for learning the SkipAtom vectors. We use the
+            <a href="https://materialsproject.org/" target="_blank"> Materials Project</a> database, from which we
+            obtain over 126,000 compounds and their crystal structures. The first step requires the creation of training
+            pairs, as depicted in Figure 2. This results in over 15 million pairs being generated. These pairs of
+            co-occurring atoms are then used in a prediction task: given the first atom in the pair, the model must
+            predict what the other atom is. In practice, this means minimizing the cross-entropy loss between the actual
+            paired atom and the predicted one, given that atoms are represented as one-hot vectors at this stage. The
+            atom vectors are found in the embedding matrix, <i><b>W</b><sub>e</sub></i> (see Figure 3).
+        </p>
+
+        <figure>
+            <div>
+                <img src="images/skipatom-model-training.png" alt="model training" />
+            </div>
+            <figcaption>
+                Figure 3: A depiction of how SkipAtom vectors are derived through training. An atom, represented as a
+                one-hot vector, <i><b>x</b></i>, is multiplied with the matrix <i><b>W</b><sub>e</sub></i>, to yield the
+                intermediate vector <i><b>h</b></i>. Then <i><b>h</b></i> is multiplied with
+                <i><b>W</b><sub>s</sub></i>, to which a <i>softmax</i> operation is applied to obtain the output
+                <i><b>y&#770;</b></i>. During training, the cross-entropy loss between the context atom, represented
+                by <i><b>y</b></i>, and the predicted atom, <i><b>y&#770;</b></i>, is minimized. The columns of the
+                matrix <i><b>W</b><sub>e</sub></i> will be the learned atom vectors, after training is complete.
+            </figcaption>
+        </figure>
+
+        <H2>
+            Results
+        </H2>
+
+        <p>
+            A common way of visualizing the results of learning such representations is to apply a dimensionality
+            reduction technique, such as
+            <a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">PCA</a> or
+            <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding" target="_blank">t-SNE</a>.
+            The vectors can be reduced to 2 or 3 dimensions, and then plotted. We applied t-SNE to the learned SkipAtom
+            atom vectors, reducing them to 2 dimensions from their original 200 dimensions, and plotted them. See Figure
+            4. There appears to be logical structure to the data. For example, the alkali metals are clustered together,
+            as are the light non-metals. It is important to note that while the locations of the atoms in the plot may
+            look somewhat arbitrary, they in fact reflect chemo-structural nuances gleaned from the dataset.
+        </p>
+
+        <figure>
+            <div>
+                <img src="images/skipatom-tsne.png" alt="tSNE" />
+            </div>
+            <figcaption>
+                Figure 4: Dimensionally reduced SkipAtom atom vectors with an original size of 200 dimensions. The
+                vectors were reduced to 2 dimensions using t-SNE.
+            </figcaption>
+        </figure>
+
+        <p>
+            Visualizing the representations helps us to understand something about the structure of the learned space,
+            however, the best way to assess their quality is to use them in a task, and examine the resulting
+            performance. For benchmarking and comparison purposes, there exists a collection of datasets and tasks for
+            Computational Materials Science, known as the
+            <a href="https://matbench.materialsproject.org/" target="_blank">Matbench</a> test suite. We took a number
+            of tasks from this suite, and compared the performance using an
+            <a href="https://www.nature.com/articles/s41598-018-35934-y" target="_blank">ElemNet</a> architecture with
+            various kinds of atom vector representations. The results are depicted in Figure 5.
+        </p>
+
+        <figure>
+            <div>
+                <img src="images/skipatom-performance.png" alt="tSNE" />
+            </div>
+            <figcaption>
+                Figure 5: A comparison of results on benchmark tasks. TBG refers to the Theoretical
+                Band Gap task (MAE in eV), BM to the Bulk Modulus task (MAE in log(GPa)), SM to the Shear Modulus task
+                (MAE in log(GPa)), RI to the Refractive Index task (MAE in n), and TM to the Theoretical Metallicity
+                task (ROC-AUC). These tasks make use of structure information. EBG refers to the Experimental Band Gap
+                task (MAE in eV), BMGF to the Bulk Metallic Glass Formation task (ROC-AUC), EM to the Experimental
+                Metallicity task (ROC-AUC). These tasks make use of composition only. The results that are outlined in
+                bold represent the best score for that task.
+            </figcaption>
+        </figure>
+
+        <p>
+            From the results above, we conclude that SkipAtom is about as effective as Mat2Vec, and better on some
+            tasks. It also clearly performs better than Atom2Vec (not shown here). Its real advantages, however, are
+            its conceptual simplicity, and accessibility to researchers. While Mat2Vec requires the curation of millions
+            of scientific abstracts, and a number of hand-crafted processing rules, SkipAtom requires access to a
+            dataset of crystal structure information, which can be of any size. These datasets are growing, and becoming
+            more user-friendly, making them accessible to anyone. SkipAtom vectors can also be extended, by taking into
+            consideration other aspects of chemistry, such as the oxidation states of atoms in a material (imagine
+            learning representations for atoms in their various oxidation states). We envision researchers developing
+            pre-trained SkipAtom vectors for their own, custom datasets. While the results aren't shown here, it appears
+            that using pre-trained distributed representations of atoms helps most on tasks with smaller datasets. As
+            new materials are sought to address pressing economic and environmental demands, smaller exploratory
+            datasets of materials properties will likely be common. We expect SkipAtom vectors to play a role in
+            devising effective models based on these smaller, targeted datasets.
+        </p>
+
+        <p>
+            We've made the <a href="https://github.com/lantunes/skipatom" target="_blank">source code</a> freely
+            available, distributed under the MIT license. There are trained SkipAtom atom vectors located in
+            <a href="https://github.com/lantunes/skipatom/blob/main/data/skipatom_20201009_induced.csv" target="_blank">this file</a>,
+            for easy incorporation into any codebase. We hope that this research will be of use to the Computational
+            Materials Science community, and aid in the quest to discover new materials that address social, economic
+            and environmental needs.
         </p>
 
         <hr style="border-top: 1px"/>
