@@ -31,8 +31,15 @@ h1 {
 	padding-bottom: 1em;
 }
 
+h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.3em;
+}
+
 p, li {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 160%;
+    letter-spacing: .25px;
 }
 
 p.credit {
@@ -170,6 +177,21 @@ p.copyright {
 .notestext li {
     font-size: 15px;
     margin-bottom: 10px;
+}
+
+.emph {
+    font-weight: bold;
+    font-style: italic;
+}
+
+figcaption {
+    max-width: 650px;
+    margin-right: auto;
+    margin-left: auto;
+    align-self: auto;
+    font-size: 14px;
+    line-height: 150%;
+    color: #828892;
 }
 
 @media (max-width: 800px) {
