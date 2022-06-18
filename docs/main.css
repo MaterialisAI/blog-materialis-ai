@@ -208,4 +208,16 @@ figcaption {
         padding-left: 2em;
         padding-right: 2em;
     }
+
+    .header::before {
+        height: 15%;
+    }
+}
+
+@media (max-width: 400px) {
+    .header-items {
+        position: absolute;
+        padding-top: 25px;
+        padding-left: 95px;
+    }
 }
