@@ -66,7 +66,6 @@ a:hover {
 
 .header {
     overflow: hidden;
-    background-color: #fbfbfb;
     padding: 20px 10px;
 }
 
@@ -82,7 +81,7 @@ a:hover {
     background-image: url('images/atoms.jpeg');
     background-repeat: no-repeat;
     background-position: 0 0;
-    background-size: cover;
+    background-color: #8c8c8c;
     pointer-events: none;
 }
 
@@ -208,13 +207,13 @@ figcaption {
         padding-left: 2em;
         padding-right: 2em;
     }
-
-    .header::before {
-        height: 15%;
-    }
 }
 
 @media (max-width: 400px) {
+    .header::before {
+        height: 18%;
+    }
+
     .header-items {
         position: absolute;
         padding-top: 25px;
